@@ -1,25 +1,24 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { fruitEmojis } from '@/lib/data';
 
 export default function HeroSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
+    setMounted(true);
+    const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <section id="home" ref={containerRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Animated mesh gradient background */}
       <div
         className="absolute inset-0 animate-mesh"
@@ -32,7 +31,7 @@ export default function HeroSection() {
       {/* Decorative blurs */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-sky-300/20 rounded-full blur-3xl" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-sky-200/20 rounded-full blur-3xl" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-sky-100/30 to-transparent rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-sky-100/30 rounded-full blur-3xl" />
 
       {/* Floating fruits */}
       {fruitEmojis.map((fruit, i) => (
@@ -64,23 +63,15 @@ export default function HeroSection() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           {/* Text content */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
+          <div
             className="text-center md:text-left"
-            style={{ transform: `translateY(${scrollY * 0.1}px)` }}
+            style={mounted ? { transform: `translateY(${scrollY * 0.1}px)` } : undefined}
           >
             {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 text-sky-700 text-sm font-medium mb-6"
-            >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 text-sky-700 text-sm font-medium mb-6">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
               Premium Fresh Juice
-            </motion.div>
+            </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-tight tracking-tight">
               <span className="gradient-text">Fresh Healthy</span>
@@ -88,21 +79,11 @@ export default function HeroSection() {
               <span className="text-gray-900">Juice Everyday</span>
             </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="mt-6 text-lg sm:text-xl text-gray-500 max-w-lg mx-auto md:mx-0 leading-relaxed"
-            >
+            <p className="mt-6 text-lg sm:text-xl text-gray-500 max-w-lg mx-auto md:mx-0 leading-relaxed">
               Jus buah dan sayuran segar dengan kualitas premium untuk hidup lebih sehat. Tanpa pengawet, 100% alami.
-            </motion.p>
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
-            >
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <a
                 href="https://wa.me/6285520913524?text=Halo%20Ajuice!%20Saya%20ingin%20order%20jus."
                 target="_blank"
@@ -118,40 +99,30 @@ export default function HeroSection() {
               >
                 Lihat Menu
               </a>
-            </motion.div>
+            </div>
 
             {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              className="mt-12 grid grid-cols-3 gap-4 max-w-md mx-auto md:mx-0"
-            >
+            <div className="mt-12 grid grid-cols-3 gap-4 max-w-md mx-auto md:mx-0">
               {[
                 { value: '9+', label: 'Varian Jus' },
                 { value: '100%', label: 'Alami' },
-                { value: '5★', label: 'Rating' },
+                { value: '5\u2605', label: 'Rating' },
               ].map((stat) => (
                 <div key={stat.label} className="text-center md:text-left">
                   <div className="text-2xl sm:text-3xl font-extrabold gradient-text">{stat.value}</div>
                   <div className="text-xs sm:text-sm text-gray-400 mt-1">{stat.label}</div>
                 </div>
               ))}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
-          {/* Hero image / 3D bottle */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}
+          {/* Hero image */}
+          <div
             className="relative flex items-center justify-center"
-            style={{ transform: `translateY(${scrollY * -0.05}px)` }}
+            style={mounted ? { transform: `translateY(${scrollY * -0.05}px)` } : undefined}
           >
-            {/* Background circle */}
             <div className="absolute w-72 h-72 sm:w-96 sm:h-96 bg-gradient-to-br from-sky-100 to-sky-200 rounded-full opacity-60 blur-sm" />
 
-            {/* Main image */}
             <motion.div
               animate={{ y: [0, -15, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
@@ -169,7 +140,6 @@ export default function HeroSection() {
               </div>
             </motion.div>
 
-            {/* Floating small elements */}
             <motion.div
               className="absolute top-10 right-10 w-16 h-16 bg-gradient-to-br from-red-400 to-red-500 rounded-2xl shadow-lg flex items-center justify-center text-2xl"
               animate={{ y: [0, -10, 0], rotate: [0, 10, -10, 0] }}
@@ -191,7 +161,7 @@ export default function HeroSection() {
             >
               🥝
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </div>
 

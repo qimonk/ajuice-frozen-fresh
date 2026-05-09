@@ -43,10 +43,9 @@ export default function ProductCard({ name, image, description, prices, gradient
   return (
     <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
+      viewport={{ once: true, margin: '-30px' }}
+      transition={{ duration: 0.6, delay: index * 0.05 }}
       className="perspective-1000"
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
@@ -58,9 +57,6 @@ export default function ProductCard({ name, image, description, prices, gradient
       >
         {/* Gradient background */}
         <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-500`} />
-
-        {/* Glow effect on hover */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-5 blur-2xl transition-opacity duration-500`} />
 
         {/* Image container */}
         <div className="relative h-52 sm:h-56 overflow-hidden bg-gradient-to-b from-gray-50 to-white">
@@ -79,7 +75,6 @@ export default function ProductCard({ name, image, description, prices, gradient
             />
           </motion.div>
 
-          {/* Floating badge */}
           <div className="absolute top-3 right-3">
             <div className={`px-3 py-1 rounded-full bg-gradient-to-r ${gradient} text-white text-xs font-semibold shadow-lg`}>
               Fresh
@@ -89,17 +84,14 @@ export default function ProductCard({ name, image, description, prices, gradient
 
         {/* Content */}
         <div className="p-5 space-y-3 relative z-10">
-          {/* Name */}
           <h3 className="text-xl font-bold text-gray-900 group-hover:text-sky-700 transition-colors">
             {name}
           </h3>
 
-          {/* Description */}
           <p className="text-sm text-gray-500 leading-relaxed line-clamp-2">
             {description}
           </p>
 
-          {/* Prices */}
           <div className="space-y-1.5">
             {prices.map((p, i) => (
               <div key={i} className="flex justify-between items-center text-sm">
@@ -109,7 +101,6 @@ export default function ProductCard({ name, image, description, prices, gradient
             ))}
           </div>
 
-          {/* Buy button */}
           <a
             href={`https://wa.me/6285520913524?text=${waMessage}`}
             target="_blank"

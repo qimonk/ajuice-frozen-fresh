@@ -6,9 +6,9 @@ import { products } from '@/lib/data';
 import ProductCard from './ProductCard';
 
 const categories = [
-  { id: 'all', label: 'Semua', icon: ' Juice' },
-  { id: 'fruit', label: 'Juice Fruit', icon: ' Fruit' },
-  { id: 'vegetable', label: 'Juice Vegetable', icon: ' Veggie' },
+  { id: 'all', label: 'Semua' },
+  { id: 'fruit', label: 'Juice Fruit' },
+  { id: 'vegetable', label: 'Juice Vegetable' },
 ] as const;
 
 export default function ProductSection() {
@@ -21,18 +21,11 @@ export default function ProductSection() {
 
   return (
     <section id="products" className="py-20 sm:py-28 section-gradient-white relative">
-      {/* Decorative */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-sky-200 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-14"
-        >
+        <div className="text-center mb-14">
           <span className="inline-block px-4 py-1.5 rounded-full bg-sky-100 text-sky-600 text-sm font-semibold mb-4">
             Menu Kami
           </span>
@@ -42,16 +35,10 @@ export default function ProductSection() {
           <p className="mt-4 text-gray-500 max-w-2xl mx-auto text-lg">
             Temukan berbagai varian jus buah dan sayuran segar pilihan dengan kualitas premium untuk menemani hari-hari sehat Anda.
           </p>
-        </motion.div>
+        </div>
 
         {/* Category filter */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-3 mb-12"
-        >
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
           {categories.map((cat) => (
             <button
               key={cat.id}
@@ -65,7 +52,7 @@ export default function ProductSection() {
               {cat.label}
             </button>
           ))}
-        </motion.div>
+        </div>
 
         {/* Products grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -83,13 +70,7 @@ export default function ProductSection() {
         </div>
 
         {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mt-16"
-        >
+        <div className="text-center mt-16">
           <p className="text-gray-500 mb-4">
             Tertarik order dalam jumlah besar?
           </p>
@@ -101,7 +82,7 @@ export default function ProductSection() {
           >
             Hubungi Kami via WhatsApp
           </a>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
