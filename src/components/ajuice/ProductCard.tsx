@@ -1,13 +1,8 @@
 'use client';
 
-import { useRef, useState, useCallback, Suspense } from 'react';
+import { useRef, useState, useCallback } from 'react';
+import Image from 'next/image';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import dynamic from 'next/dynamic';
-
-const ProductBottle3D = dynamic(
-  () => import('./ProductBottle3D'),
-  { ssr: false }
-);
 
 interface ProductCardProps {
   name: string;
@@ -20,20 +15,6 @@ interface ProductCardProps {
   productId: string;
 }
 
-/* Loading skeleton for 3D canvas */
-function CanvasLoader() {
-  return (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="relative">
-        <div className="w-12 h-12 rounded-full border-2 border-sky-200 border-t-sky-500 animate-spin" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-sky-400 to-cyan-400 animate-pulse" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function ProductCard({
   name,
   image,
@@ -42,10 +23,10 @@ export default function ProductCard({
   gradient,
   category,
   index,
-  productId,
 }: ProductCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -142,11 +123,35 @@ export default function ProductCard({
           className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-[0.02] group-hover:opacity-[0.07] transition-opacity duration-700 rounded-3xl`}
         />
 
-        {/* 3D Product Canvas Container */}
-        <div className="relative h-60 sm:h-64 overflow-hidden rounded-t-3xl bg-gradient-to-b from-gray-50/40 to-white/20">
-          <Suspense fallback={<CanvasLoader />}>
-            <ProductBottle3D productId={productId} isHovered={isHovered} />
-          </Suspense>
+        {/* Product image container */}
+        <div className="relative h-64 sm:h-72 overflow-hidden rounded-t-3xl bg-gradient-to-b from-gray-50/60 to-white/30">
+          {/* Smooth loading transition */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: imgLoaded ? 1 : 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={image}
+              alt={`Jus ${name} - Ajuice Frozen & Fresh`}
+              fill
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              loading={index < 3 ? 'eager' : 'lazy'}
+              onLoad={() => setImgLoaded(true)}
+            />
+          </motion.div>
+
+          {/* Loading skeleton */}
+          {!imgLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-50">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-10 h-10 rounded-full border-2 border-gray-200 border-t-sky-400 animate-spin" />
+                <span className="text-xs text-gray-400 font-medium">Memuat...</span>
+              </div>
+            </div>
+          )}
 
           {/* Category badge */}
           <div className="absolute top-3 right-3 z-10">
@@ -157,8 +162,8 @@ export default function ProductCard({
             </div>
           </div>
 
-          {/* Bottom gradient fade */}
-          <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white/40 to-transparent" />
+          {/* Bottom gradient fade for smooth blend */}
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white/60 to-transparent" />
         </div>
 
         {/* Content */}
