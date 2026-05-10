@@ -154,6 +154,7 @@ export default function ProductSection() {
                 gradient={product.gradient}
                 category={product.category}
                 index={index}
+                productId={product.id}
               />
             ))}
           </AnimatePresence>

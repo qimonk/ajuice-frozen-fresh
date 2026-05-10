@@ -1,8 +1,13 @@
 'use client';
 
-import { useRef, useState, useCallback } from 'react';
-import Image from 'next/image';
+import { useRef, useState, useCallback, Suspense } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import dynamic from 'next/dynamic';
+
+const ProductBottle3D = dynamic(
+  () => import('./ProductBottle3D'),
+  { ssr: false }
+);
 
 interface ProductCardProps {
   name: string;
@@ -12,6 +17,21 @@ interface ProductCardProps {
   gradient: string;
   category: string;
   index: number;
+  productId: string;
+}
+
+/* Loading skeleton for 3D canvas */
+function CanvasLoader() {
+  return (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="relative">
+        <div className="w-12 h-12 rounded-full border-2 border-sky-200 border-t-sky-500 animate-spin" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-sky-400 to-cyan-400 animate-pulse" />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function ProductCard({
@@ -22,6 +42,7 @@ export default function ProductCard({
   gradient,
   category,
   index,
+  productId,
 }: ProductCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -30,16 +51,16 @@ export default function ProductCard({
   const y = useMotionValue(0);
 
   // Cinematic 3D tilt
-  const rotateX = useSpring(useTransform(y, [-200, 200], [15, -15]), {
+  const rotateX = useSpring(useTransform(y, [-200, 200], [12, -12]), {
     stiffness: 250,
     damping: 25,
   });
-  const rotateY = useSpring(useTransform(x, [-200, 200], [-15, 15]), {
+  const rotateY = useSpring(useTransform(x, [-200, 200], [-12, 12]), {
     stiffness: 250,
     damping: 25,
   });
 
-  // Dynamic shadow that follows mouse
+  // Dynamic shadow
   const shadowX = useSpring(useTransform(x, [-200, 200], [20, -20]), {
     stiffness: 150,
     damping: 25,
@@ -48,10 +69,6 @@ export default function ProductCard({
     stiffness: 150,
     damping: 25,
   });
-
-  // Shine angle
-  const shineX = useTransform(x, [-200, 200], [100, -100]);
-  const shineY = useTransform(y, [-200, 200], [100, -100]);
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -96,9 +113,9 @@ export default function ProductCard({
         {/* Glassmorphism card base */}
         <div className="absolute inset-0 glass-card rounded-3xl transition-all duration-500" />
 
-        {/* Dynamic light reflection that follows mouse */}
+        {/* Dynamic light reflection on hover */}
         <motion.div
-          className="absolute inset-0 z-20 pointer-events-none rounded-3xl overflow-hidden opacity-0 transition-opacity duration-400"
+          className="absolute inset-0 z-20 pointer-events-none rounded-3xl overflow-hidden transition-opacity duration-400"
           style={{
             opacity: isHovered ? 0.6 : 0,
             background: `radial-gradient(circle at 50% 0%, rgba(255,255,255,0.25) 0%, transparent 60%)`,
@@ -125,34 +142,23 @@ export default function ProductCard({
           className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-[0.02] group-hover:opacity-[0.07] transition-opacity duration-700 rounded-3xl`}
         />
 
-        {/* Image container */}
-        <div className="relative h-52 sm:h-56 overflow-hidden bg-gradient-to-b from-gray-50/60 to-white/30 rounded-t-3xl">
-          <motion.div
-            animate={isHovered ? { scale: 1.1 } : { scale: 1 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full h-full"
-          >
-            <Image
-              src={image}
-              alt={`Jus ${name} - Ajuice Frozen & Fresh`}
-              fill
-              className="object-contain p-5"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              loading="lazy"
-            />
-          </motion.div>
+        {/* 3D Product Canvas Container */}
+        <div className="relative h-60 sm:h-64 overflow-hidden rounded-t-3xl bg-gradient-to-b from-gray-50/40 to-white/20">
+          <Suspense fallback={<CanvasLoader />}>
+            <ProductBottle3D productId={productId} isHovered={isHovered} />
+          </Suspense>
 
           {/* Category badge */}
           <div className="absolute top-3 right-3 z-10">
             <div
-              className={`px-3 py-1 rounded-full bg-gradient-to-r ${gradient} text-white text-xs font-semibold shadow-lg`}
+              className={`px-3 py-1 rounded-full bg-gradient-to-r ${gradient} text-white text-xs font-semibold shadow-lg backdrop-blur-sm`}
             >
               {categoryLabel}
             </div>
           </div>
 
           {/* Bottom gradient fade */}
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white/50 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white/40 to-transparent" />
         </div>
 
         {/* Content */}
